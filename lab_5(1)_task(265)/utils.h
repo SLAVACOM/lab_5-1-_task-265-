@@ -5,8 +5,8 @@ void task();
 
 void readFromConsole(std::string& buffer);
 
-void readFromFile(std::string filename,std::string& buffer);
+bool readFromFile(std::string filename,std::string& buffer);
 
-void writeToFile(std::string filename, std::string& buffer);
+bool writeToFile(std::string filename, std::string& buffer);
 
 void editData(std::string& buffer);

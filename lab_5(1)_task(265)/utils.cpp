@@ -12,7 +12,6 @@ using namespace std;
 
 void task() {
 	regex valid_input("^[01]$");
-	regex valid_path(R"(^(?:(?:[^\\/][^\\/:*?"<>|\r\n]*[\\/])*(?:[^\\/:*?"<>|\r\n]+)\.txt)?$)");
 
 	string input, in_option, out_option;
 
@@ -33,22 +32,27 @@ void task() {
 
 		if (in_option == "0") readFromConsole(dataBuffer);
 		else if (in_option == "1") {
+			bool valid_file = false;
+
 			do {
-				cout << "Укажите файл для ввода исходных данных для работы программы (enter для файла по умолчанию): ";
+				cout << "Укажите файл для ввода исходных данных (без расширения) (enter для файла по умолчанию): ";
 				getline(cin, input);
-			} while (!regex_match(input, valid_path));
-			readFromFile(input,dataBuffer);
+				valid_file = readFromFile(input, dataBuffer);
+			} while (!valid_file);
+			
 		}
 
 		editData(dataBuffer);
 
 		if (out_option == "0") cout << dataBuffer << endl;
 		else if (out_option == "1") {
+			bool valid_file = false;
 			do {
-				cout << "Укажите файл для вывода исходных данных для работы программы (enter для файла по умолчанию): ";
+				cout << "Укажите файл для вывода исходных данных (без расширения) (enter для файла по умолчанию): ";
 				getline(cin, input);
-			} while (!regex_match(input, valid_path));
-			writeToFile(input, dataBuffer);
+				valid_file = writeToFile(input, dataBuffer);
+			} while (!valid_file);
+			
 		}
 
 		if (in_option == "0") {
@@ -77,21 +81,25 @@ void editData(std::string& buffer) {
 	}
 }
 
-void readFromFile(std::string filename, std::string& buffer) {
-	ifstream file(filename =="" ?constants::input:filename);
+bool readFromFile(std::string filename, std::string& buffer) {
+	ifstream file(filename == "" ? constants::input : filename + ".txt");
 	if (file.is_open()) {
 		string line;
 		while (getline(file, line)) buffer+=line+'\n';
 		file.close();
+		return true;
 	}
-	else cout << "Ошибка при открытии файла";
+	else cout << "Ошибка при открытии файла" << endl;
+	return false;
 }
 
-void writeToFile(string filename, string& buffer) {
-	ofstream outputFile(filename == "" ? constants::output : filename);
+bool writeToFile(string filename, string& buffer) {
+	ofstream outputFile(filename == "" ? constants::output : filename + ".txt");
 	if (!outputFile.is_open()) cout << "Ошибка при открытии файла для записи" << endl;
 	else {
 		outputFile << buffer << endl; 
 		outputFile.close();
+		return true;
 	}
+	return false;
 }
